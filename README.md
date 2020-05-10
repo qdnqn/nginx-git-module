@@ -1,6 +1,9 @@
 # nginx-git-module
 This module is allowing nginx to serve git repos over http. Module is heavily relying on [libgithttp](https://github.com/qdnqn/libgithttp) and optionally for brokering services on [libgithttp-controller](https://github.com/qdnqn/libgithttp-controller). In the configuration example I have used modified auth_basic module originating from nginx official repo so It can validate users in the same manner that auth_basic does but instead for looking in file, it looks in redis database for username:password (generated with htpasswd).
 
+## Docker version with everything in place
+Soon.
+
 ## So how it works?
 Authentication is www-auth basic authentication so no secure way of authentication is provided for now. It works same as auth_basic does but authentication is made against redis database. I have made example available at https://github.com/qdnqn/nginx-basic-auth.
 
