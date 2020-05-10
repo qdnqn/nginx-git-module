@@ -177,7 +177,7 @@ static ngx_int_t ngx_http_git_handler(ngx_http_request_t *r){
 	r->headers_out.status = git_config->status;
 	
 	/*
-	 * Now in work with colleague ngx_http_auth_basic_module we need to do some administration
+	 * Now in work with colleague ngx_http_auth_basic_module(modified) we need to do some administration
 	 */
 	
 	uint8_t allowed = ALLOWED_GUEST;
@@ -381,21 +381,18 @@ void ngxstr_response(ngx_str_t* ngxstr, g_str_t* gstr){
 	ngxstr->len = gstr->size-1;	// Remove \0 element from gstr
 }
 
-static void ngx_http_sample_put_handler(ngx_http_request_t *r)
-{
+static void ngx_http_sample_put_handler(ngx_http_request_t *r){
     ngx_log_debug0(NGX_LOG_DEBUG_HTTP, r->connection->log, 0, "put handler called");
 
     int fd = creat("/tmp/test.txt", 0777);
 
-    if(-1 == fd)
-    {
+    if(-1 == fd){
         ngx_log_error(NGX_LOG_ERR, r->connection->log, 0, "Failed to create mail file.%s", strerror(errno));
         ngx_http_finalize_request(r, NGX_HTTP_INTERNAL_SERVER_ERROR);
         return;
     }
 
-    if(NULL == r->request_body->temp_file)
-    {
+    if(NULL == r->request_body->temp_file){
         /*
          * The entire request body is available in the list of buffers pointed by r->request_body->bufs.
          *
@@ -421,9 +418,7 @@ static void ngx_http_sample_put_handler(ngx_http_request_t *r)
                 return;
             }
         }
-    }
-    else
-    {
+    } else {
         /**
          * The entire request body is available in the temporary file.
          *
@@ -434,15 +429,14 @@ static void ngx_http_sample_put_handler(ngx_http_request_t *r)
 
         ngx_log_debug0(NGX_LOG_DEBUG_HTTP, r->connection->log, 0, "Writing data from temp file.");
 
-        while(  (ret = ngx_read_file(&r->request_body->temp_file->file, data, 4096, offset)) > 0)
-        {
-            if(write(fd, data, ret) < 0)
-            {
+        while((ret = ngx_read_file(&r->request_body->temp_file->file, data, 4096, offset)) > 0) {
+            if(write(fd, data, ret) < 0) {
                 ngx_log_error(NGX_LOG_ERR, r->connection->log, 0, "Failed to allocate response buffer.");
                 ngx_http_finalize_request(r, NGX_HTTP_INTERNAL_SERVER_ERROR);
                 close(fd);
                 return;
             }
+            
             offset = offset + ret;
         }
     }
